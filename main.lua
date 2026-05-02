@@ -1,49 +1,50 @@
--- Miner's Haven: FAST AUTO REBIRTH LOOP
+-- Miner's Haven: ULTIMATE FAST LOOP (Based on Video Logic)
 local player = game.Players.LocalPlayer
 local RS = game:GetService("ReplicatedStorage")
 
 local layoutSlot = 1
-local rebirthReq = 1e500 -- Target nimo
+local targetExponent = 300 -- Tungod kay $1e301 na imong kwarta
 
-print("Advanced Auto-Script is running via GitHub!")
+print("Ultimate Auto-Script is running via GitHub!")
 
-while task.wait(0.5) do -- Mas paspas nga check (0.5 sec)
+-- Function para sa Rebirth Sequence
+local function doRebirth()
+    print("Rebirthing...")
+    if RS:FindFirstChild("Rebirth") then
+        RS.Rebirth:FireServer()
+        RS.Rebirth:FireServer(1e50) -- Trigger server call
+    end
+end
+
+-- Function para sa Load Layout
+local function loadLayout()
+    print("Loading Layout Slot "..tostring(layoutSlot))
+    if RS:FindFirstChild("Layouts") then
+        RS.Layouts.FireServer("Load", tostring(layoutSlot))
+        RS.Layouts.FireServer("Load", layoutSlot)
+    end
+end
+
+while task.wait(0.1) do -- Paspas nga loop
     pcall(function()
         local stats = player:FindFirstChild("leaderstats") or player:FindFirstChild("Data")
         if not stats then return end
         
         local cash = stats.Cash.Value
-
-        -- 1. AUTOMATIC LOADOUT (Kung wala pay kwarta o bag-ong rebirth)
+        
+        -- Logic: Kung gamay og kwarta, load dayon layout
         if tonumber(cash) < 1000 then
-            if RS:FindFirstChild("Layouts") then
-                RS.Layouts.FireServer("Load", tostring(layoutSlot))
-                RS.Layouts.FireServer("Load", layoutSlot)
-                print("Layout Slot 1 Loaded.")
-                task.wait(3) -- Wait kadiyot para maka-flow ang ore
-            end
+            loadLayout()
+            task.wait(2) -- Wait kadiyot para sa ores
         end
 
-        -- 2. DETECT KUNG KA-REBIRTH NA (Lapas sa target o naay 'e' condition)
-        local canRebirth = false
-        if tonumber(cash) >= rebirthReq then
-            canRebirth = true
-        elseif tostring(cash):find("e") then
-            local exponent = tonumber(tostring(cash):split("e")[2])
-            if exponent and exponent >= 500 then
-                canRebirth = true
+        -- Logic: Check exponent para sa Rebirth
+        if tostring(cash):find("e") then
+            local exp = tonumber(tostring(cash):split("e")[2])
+            if exp and exp >= targetExponent then
+                doRebirth()
+                task.wait(1)
             end
-        end
-
-        -- 3. REBIRTH SEQUENCE (Settings Rebirth)
-        if canRebirth then
-            print("Money detected! Clicking Rebirth...")
-            if RS:FindFirstChild("Rebirth") then
-                -- Gi-duplicate ang remote para segurado mo-toplok sa server
-                RS.Rebirth:FireServer() 
-                RS.Rebirth:FireServer(rebirthReq)
-            end
-            task.wait(1) -- Pause kadiyot para dili ma-spam ang remote
         end
     end)
 end
