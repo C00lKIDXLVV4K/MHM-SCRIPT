@@ -1,45 +1,51 @@
--- Miner's Haven: ULTIMATE FAST LOOP (Based on Video Logic)
+-- Miner's Haven: DEBUGGED ULTRA LOOP
 local player = game.Players.LocalPlayer
 local RS = game:GetService("ReplicatedStorage")
 
 local layoutSlot = 1
-local targetExponent = 300 -- Tungod kay $1e301 na imong kwarta
+local targetExponent = 300 
 
-print("Ultimate Auto-Script is running via GitHub!")
+print("DEBUG VERSION: Script is starting...")
 
--- Function para sa Rebirth Sequence
+-- Function para sa Rebirth
 local function doRebirth()
-    print("Rebirthing...")
-    if RS:FindFirstChild("Rebirth") then
-        RS.Rebirth:FireServer()
-        RS.Rebirth:FireServer(1e50) -- Trigger server call
+    print("Attempting Rebirth Remote...")
+    local rebirthRemote = RS:FindFirstChild("Rebirth") or RS:FindFirstChild("RebirthRemote") -- Check alternative names
+    if rebirthRemote then
+        rebirthRemote:FireServer()
+        rebirthRemote:FireServer(1e50)
+    else
+        print("Error: Rebirth Remote not found!")
     end
 end
 
 -- Function para sa Load Layout
 local function loadLayout()
-    print("Loading Layout Slot "..tostring(layoutSlot))
-    if RS:FindFirstChild("Layouts") then
-        RS.Layouts.FireServer("Load", tostring(layoutSlot))
-        RS.Layouts.FireServer("Load", layoutSlot)
+    print("Attempting Layout Load...")
+    local layoutRemote = RS:FindFirstChild("Layouts") or RS:FindFirstChild("LayoutRemote")
+    if layoutRemote then
+        layoutRemote:FireServer("Load", tostring(layoutSlot))
+        layoutRemote:FireServer("Load", layoutSlot)
+    else
+        print("Error: Layout Remote not found!")
     end
 end
 
-while task.wait(0.1) do -- Paspas nga loop
+while task.wait(0.5) do
     pcall(function()
         local stats = player:FindFirstChild("leaderstats") or player:FindFirstChild("Data")
         if not stats then return end
         
         local cash = stats.Cash.Value
-        local cashStr = tostring(cash):lower() -- Himoong small letter para dali ma-detect
+        local cashStr = tostring(cash):lower()
         
-        -- 1. KUNG BAG-ONG REBIRTH (Gamay cash), LOAD LAYOUT DAYON
+        -- Trigger Load Layout kung $50 pa ang kwarta
         if tonumber(cash) < 1000 then
             loadLayout()
-            task.wait(2) -- Wait kadiyot para sa ores
+            task.wait(3) 
         end
 
-        -- 2. CHECK KUNG LAPAS NA SA TARGET EXPONENT
+        -- Trigger Rebirth kung lapas na sa target exponent
         if cashStr:find("e") then
             local exp = tonumber(cashStr:split("e")[2])
             if exp and exp >= targetExponent then
