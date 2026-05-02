@@ -1,44 +1,42 @@
--- Miner's Haven: ULTIMATE FINAL FIX
+-- Miner's Haven: THE STRICT FIX
 local player = game.Players.LocalPlayer
 local RS = game:GetService("ReplicatedStorage")
 
-print("FINAL FIX: Monitoring Cash and Remotes...")
+print("STRICT FIX: Active and Scanning...")
 
--- Function para mangita sa saktong Remotes
-local function getRemote(name)
+-- Mas detalyado nga pagpangita sa Remote
+local function findRemote(name)
     for _, v in pairs(RS:GetDescendants()) do
-        if v:IsA("RemoteEvent") and v.Name:lower():find(name:lower()) then
+        if v:IsA("RemoteEvent") and v.Name:find(name) then
             return v
         end
     end
-    return nil
 end
 
 while task.wait(1) do
     pcall(function()
         local stats = player:FindFirstChild("leaderstats") or player:FindFirstChild("Data")
-        if not stats then return end
-        
         local cash = stats.Cash.Value
-        local cashStr = tostring(cash):lower()
-
-        -- 1. AUTO LOAD LAYOUT (L)
+        
+        -- KUNG BAG-ONG REBIRTH ($50)
         if tonumber(cash) <= 1000 then
-            local layoutRemote = getRemote("Layout")
+            local layoutRemote = findRemote("Layout")
             if layoutRemote then
-                print("Final Fix: Loading Layout...")
+                -- Suwayan nato ang tulo ka format kay basin sensitive ang game
+                layoutRemote:FireServer("Load", "Slot 1") 
                 layoutRemote:FireServer("Load", 1)
                 layoutRemote:FireServer("Load", "1")
+                print("Strict Fix: Command Sent to Layout!")
             end
-            task.wait(3)
+            task.wait(5) -- Mas taas nga pahuway para dili ma-kick
         end
 
-        -- 2. AUTO REBIRTH (C)
-        if cashStr:find("e") then
-            local rebirthRemote = getRemote("Rebirth")
+        -- KUNG REBIRTH TIME NA
+        if tostring(cash):lower():find("e") then
+            local rebirthRemote = findRemote("Rebirth")
             if rebirthRemote then
-                print("Final Fix: Rebirthing...")
                 rebirthRemote:FireServer()
+                print("Strict Fix: Command Sent to Rebirth!")
             end
             task.wait(1)
         end
