@@ -1,31 +1,17 @@
--- Miner's Haven: FINAL ADJUSTED LOOP
+-- Miner's Haven: ULTIMATE FINAL FIX
 local player = game.Players.LocalPlayer
 local RS = game:GetService("ReplicatedStorage")
 
-print("SCRIPT START: Checking Layouts (L) and Settings (C) Remotes...")
+print("FINAL FIX: Monitoring Cash and Remotes...")
 
--- Function para sa Force Load
-local function forceLoad()
-    -- Sa Miner's Haven, kasagaran naa ni sa 'Layouts' o 'LayoutsFolder'
-    local layoutRemote = RS:FindFirstChild("Layouts") or RS:FindFirstChild("LayoutRemote")
-    if layoutRemote then
-        print("Nuclear: Loading Layout Slot 1...")
-        layoutRemote:FireServer("Load", 1) 
-        layoutRemote:FireServer("Load", "1")
-    else
-        print("Error: Dili makita ang Layout Remote (L)!")
+-- Function para mangita sa saktong Remotes
+local function getRemote(name)
+    for _, v in pairs(RS:GetDescendants()) do
+        if v:IsA("RemoteEvent") and v.Name:lower():find(name:lower()) then
+            return v
+        end
     end
-end
-
--- Function para sa Rebirth
-local function forceRebirth()
-    local rebirthRemote = RS:FindFirstChild("Rebirth") or RS:FindFirstChild("RebirthRemote")
-    if rebirthRemote then
-        print("Nuclear: Rebirthing via Settings (C) Logic...")
-        rebirthRemote:FireServer()
-    else
-        print("Error: Dili makita ang Rebirth Remote (C)!")
-    end
+    return nil
 end
 
 while task.wait(1) do
@@ -34,16 +20,26 @@ while task.wait(1) do
         if not stats then return end
         
         local cash = stats.Cash.Value
-        
-        -- Logic: Kung $50 (bag-ong rebirth), load dayon layout
+        local cashStr = tostring(cash):lower()
+
+        -- 1. AUTO LOAD LAYOUT (L)
         if tonumber(cash) <= 1000 then
-            forceLoad()
-            task.wait(3) -- Hatag time para mo-load ang base
+            local layoutRemote = getRemote("Layout")
+            if layoutRemote then
+                print("Final Fix: Loading Layout...")
+                layoutRemote:FireServer("Load", 1)
+                layoutRemote:FireServer("Load", "1")
+            end
+            task.wait(3)
         end
 
-        -- Logic: Kung ang kwarta naay 'e' (scientific notation), rebirth na
-        if tostring(cash):lower():find("e") then
-            forceRebirth()
+        -- 2. AUTO REBIRTH (C)
+        if cashStr:find("e") then
+            local rebirthRemote = getRemote("Rebirth")
+            if rebirthRemote then
+                print("Final Fix: Rebirthing...")
+                rebirthRemote:FireServer()
+            end
             task.wait(1)
         end
     end)
