@@ -1,56 +1,42 @@
--- Miner's Haven: DEBUGGED ULTRA LOOP
+-- Miner's Haven: THE NUCLEAR AUTO-SCRIPT
 local player = game.Players.LocalPlayer
 local RS = game:GetService("ReplicatedStorage")
 
-local layoutSlot = 1
-local targetExponent = 300 
+print("NUCLEAR VERSION: Searching for remotes...")
 
-print("DEBUG VERSION: Script is starting...")
+-- Auto-detect Remotes (Pangitaon ang naay 'Rebirth' o 'Layout' sa ngalan)
+local rebirthRemote = RS:FindFirstChild("Rebirth") or RS:FindFirstChild("RebirthRemote")
+local layoutRemote = RS:FindFirstChild("Layouts") or RS:FindFirstChild("LayoutRemote")
 
--- Function para sa Rebirth
-local function doRebirth()
-    print("Attempting Rebirth Remote...")
-    local rebirthRemote = RS:FindFirstChild("Rebirth") or RS:FindFirstChild("RebirthRemote") -- Check alternative names
-    if rebirthRemote then
-        rebirthRemote:FireServer()
-        rebirthRemote:FireServer(1e50)
-    else
-        print("Error: Rebirth Remote not found!")
+-- Fallback search (Kung nausab gyud ang ngalan)
+if not rebirthRemote or not layoutRemote then
+    for _, v in pairs(RS:GetDescendants()) do
+        if v:IsA("RemoteEvent") then
+            if v.Name:find("Rebirth") then rebirthRemote = v end
+            if v.Name:find("Layout") then layoutRemote = v end
+        end
     end
 end
 
--- Function para sa Load Layout
-local function loadLayout()
-    print("Attempting Layout Load...")
-    local layoutRemote = RS:FindFirstChild("Layouts") or RS:FindFirstChild("LayoutRemote")
-    if layoutRemote then
-        layoutRemote:FireServer("Load", tostring(layoutSlot))
-        layoutRemote:FireServer("Load", layoutSlot)
-    else
-        print("Error: Layout Remote not found!")
-    end
-end
-
-while task.wait(0.5) do
+while task.wait(1) do
     pcall(function()
         local stats = player:FindFirstChild("leaderstats") or player:FindFirstChild("Data")
-        if not stats then return end
-        
         local cash = stats.Cash.Value
-        local cashStr = tostring(cash):lower()
         
-        -- Trigger Load Layout kung $50 pa ang kwarta
-        if tonumber(cash) < 1000 then
-            loadLayout()
-            task.wait(3) 
+        -- FORCE LOAD (Kung bag-ong rebirth)
+        if tonumber(cash) <= 1000 then
+            print("Nuclear: Attempting to Load Layout...")
+            if layoutRemote then
+                layoutRemote:FireServer("Load", 1)
+                layoutRemote:FireServer("Load", "1")
+            end
         end
 
-        -- Trigger Rebirth kung lapas na sa target exponent
-        if cashStr:find("e") then
-            local exp = tonumber(cashStr:split("e")[2])
-            if exp and exp >= targetExponent then
-                doRebirth()
-                task.wait(1)
+        -- FORCE REBIRTH (Testing mode: set to 10 para ma-test dayon)
+        if tostring(cash):find("e") or tonumber(cash) > 1e10 then
+            print("Nuclear: Attempting to Rebirth...")
+            if rebirthRemote then
+                rebirthRemote:FireServer()
             end
         end
     end)
