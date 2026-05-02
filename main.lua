@@ -1,5 +1,3 @@
--- C00LKIDXLVV4K SCRIPTAASS
-
 -- Miner's Haven Mod: FULL AUTO (GitHub Version)
 local player = game.Players.LocalPlayer
 local RS = game:GetService("ReplicatedStorage")
