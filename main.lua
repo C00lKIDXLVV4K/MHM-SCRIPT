@@ -31,16 +31,17 @@ while task.wait(0.1) do -- Paspas nga loop
         if not stats then return end
         
         local cash = stats.Cash.Value
+        local cashStr = tostring(cash):lower() -- Himoong small letter para dali ma-detect
         
-        -- Logic: Kung gamay og kwarta, load dayon layout
+        -- 1. KUNG BAG-ONG REBIRTH (Gamay cash), LOAD LAYOUT DAYON
         if tonumber(cash) < 1000 then
             loadLayout()
             task.wait(2) -- Wait kadiyot para sa ores
         end
 
-        -- Logic: Check exponent para sa Rebirth
-        if tostring(cash):find("e") then
-            local exp = tonumber(tostring(cash):split("e")[2])
+        -- 2. CHECK KUNG LAPAS NA SA TARGET EXPONENT
+        if cashStr:find("e") then
+            local exp = tonumber(cashStr:split("e")[2])
             if exp and exp >= targetExponent then
                 doRebirth()
                 task.wait(1)
